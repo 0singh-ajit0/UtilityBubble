@@ -10,15 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    bubblewindow.cpp
 
 HEADERS += \
-    mainwindow.h
+    bubblewindow.h
 
 FORMS += \
-    mainwindow.ui
+    bubblewindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+	AppResources.qrc

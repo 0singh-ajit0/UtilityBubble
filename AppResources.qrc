@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/Icons">
+        <file>resources/icons/close-96-96.png</file>
+        <file>resources/icons/close-98-98.png</file>
+        <file>resources/icons/close-99-99.png</file>
+        <file>resources/icons/close-100-100.png</file>
+    </qresource>
+</RCC>
