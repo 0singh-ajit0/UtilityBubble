@@ -1,8 +1,11 @@
 <RCC>
     <qresource prefix="/Icons">
-        <file>resources/icons/close-96-96.png</file>
-        <file>resources/icons/close-98-98.png</file>
-        <file>resources/icons/close-99-99.png</file>
-        <file>resources/icons/close-100-100.png</file>
+        <file>resources/icons/camera-off.png</file>
+        <file>resources/icons/camera-on.png</file>
+        <file>resources/icons/circle.png</file>
+        <file>resources/icons/close.png</file>
+        <file>resources/icons/microphone-off.png</file>
+        <file>resources/icons/microphone-on.png</file>
+        <file>resources/icons/screenshot.png</file>
     </qresource>
 </RCC>

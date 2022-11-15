@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 class QPropertyAnimation;
-class QTimer;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class BubbleWindow; }
@@ -20,19 +19,20 @@ public:
 	~BubbleWindow();
 
 private slots:
-	void initApp();
-	void setMasks();
+    void initApp();
 	void minimizeApp();
 	void maximizeApp();
 	void setIcons();
-	void addAnimations();
-	void windowMoveTimerSlot();
+    void addAnimations();
+    void takeScreenshot();
+
 	void on_btnMain_clicked();
 	void on_btnFunction1_clicked();
-
 	void on_btnFunction2_clicked();
+    void on_btnFunction3_clicked();
 
 private:
+    bool isInAdminMode = false;
 	Ui::BubbleWindow *ui;
 	bool isBubbleMinimized;
 	QPropertyAnimation *maximizeAnimation = nullptr;
@@ -40,13 +40,16 @@ private:
 	int bubbleWidth;
 	int bubbleHeight;
 	QRect MonitorInfo;
-	QRect maximizedSize, minimizedSize; // keeps on changing according to the values
-	QTimer *timerForWindowPos; // Timer tracking window position
+    QRect maximizedSize, minimizedSize; // keeps on changing according to the values
+    QString pathToCameraBusDevice = "";
+    QSize iconSize;
+    int bubbleGap;
+    bool isCameraDeviceBlocked = false;
+    bool isMicVolumeZero = false;
 
-	bool eventFilter(QObject *watched, QEvent *event);
-	QPixmap makeImageRounded(const QPixmap &original);
-
-protected:
-	void resizeEvent(QResizeEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event);
+#ifdef Q_OS_LINUX
+    bool toggleCameraConfigValue();
+#endif
 };
 #endif // BUBBLEWINDOW_H
