@@ -2,12 +2,15 @@
 #define BUBBLEWINDOW_H
 
 #include <QMainWindow>
+#include <QPair>
+#include <QRegularExpressionMatch>
 
 class QPropertyAnimation;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class BubbleWindow; }
 QT_END_NAMESPACE
+
 
 class BubbleWindow : public QMainWindow
 {
@@ -25,11 +28,14 @@ private slots:
 	void setIcons();
     void addAnimations();
     void takeScreenshot();
+    void askToQuit();
 
 	void on_btnMain_clicked();
 	void on_btnFunction1_clicked();
 	void on_btnFunction2_clicked();
     void on_btnFunction3_clicked();
+    void on_btnFunction4_clicked();
+    void on_btnFunction5_clicked();
 
 private:
     bool isInAdminMode = false;
@@ -46,6 +52,10 @@ private:
     int bubbleGap;
     bool isCameraDeviceBlocked = false;
     bool isMicVolumeZero = false;
+    bool isSpeakerVolumeZero = false;
+    int curSpeakerValue = 100;
+    QRegularExpressionMatch match;
+    QTimer *timer;
 
     bool eventFilter(QObject *watched, QEvent *event);
 #ifdef Q_OS_LINUX

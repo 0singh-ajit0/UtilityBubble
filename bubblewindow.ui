@@ -7,24 +7,27 @@
     <x>0</x>
     <y>0</y>
     <width>240</width>
-    <height>380</height>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>BubbleWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="btnMain">
+   <widget class="QPushButton" name="btnFunction5">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>140</y>
+      <x>0</x>
+      <y>560</y>
       <width>100</width>
       <height>100</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
@@ -41,6 +44,56 @@
      <rect>
       <x>0</x>
       <y>280</y>
+      <width>100</width>
+      <height>100</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnFunction1">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>100</width>
+      <height>100</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnFunction4">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>420</y>
       <width>100</width>
       <height>100</height>
      </rect>
@@ -86,20 +139,17 @@
      </size>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnFunction1">
+   <widget class="QPushButton" name="btnMain">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>0</y>
+      <x>140</x>
+      <y>280</y>
       <width>100</width>
       <height>100</height>
      </rect>
     </property>
     <property name="cursor">
      <cursorShape>PointingHandCursor</cursorShape>
-    </property>
-    <property name="styleSheet">
-     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
