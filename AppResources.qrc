@@ -7,5 +7,8 @@
         <file>resources/icons/microphone-off.png</file>
         <file>resources/icons/microphone-on.png</file>
         <file>resources/icons/screenshot.png</file>
+        <file>resources/icons/volume.png</file>
+        <file>resources/icons/volume-mute.png</file>
+        <file>resources/icons/search.png</file>
     </qresource>
 </RCC>
