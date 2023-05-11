@@ -1,5 +1,6 @@
 #include "bubblewindow.h"
 #include "ui_bubblewindow.h"
+#include "speechtotext.h"
 
 #include <QtGui>
 #include <QDebug>
@@ -16,11 +17,17 @@
 #include <QStringList>
 #include <QFile>
 #include <QFileInfo>
+#include <QtMultimedia>
 #include <QMessageBox>
+#include <QThread>
+#include <QWindow>
+#include <QUrl>
+#include <QDir>
 
 #ifdef Q_OS_LINUX
 #include <unistd.h>
 #endif
+
 
 #define BUBBLE_WIDTH    64
 #define BUBBLE_HEIGHT   64
@@ -135,6 +142,32 @@ void BubbleWindow::initApp()
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, QOverload<>::of(&BubbleWindow::askToQuit));
 
+    audioRecorder = new QAudioRecorder(this);
+    audioRecorder->setAudioInput("");
+    audioRecorder->setOutputLocation(QUrl::fromLocalFile(QDir::homePath() + "/Music/output.wav"));
+
+    QAudioEncoderSettings audioSettings;
+    audioSettings.setCodec("audio/x-raw");
+    audioSettings.setSampleRate(0);
+    audioSettings.setBitRate(0);
+    audioSettings.setChannelCount(1);
+    audioSettings.setQuality(QMultimedia::NormalQuality);
+    audioSettings.setEncodingMode(QMultimedia::ConstantQualityEncoding);
+    audioRecorder->setEncodingSettings(audioSettings, QVideoEncoderSettings(), "audio/x-wav");
+
+    speechToTextWorker = new SpeechToText(nullptr, QDir::homePath() + "/Music/", "output.wav", 3);
+
+    threadSpeechToText = new QThread;
+    connect(threadSpeechToText, SIGNAL(started()), speechToTextWorker, SLOT(startSpeechToText()));
+    connect(speechToTextWorker, SIGNAL(finished()), threadSpeechToText, SLOT(quit()));
+    connect(speechToTextWorker, SIGNAL(finished()), speechToTextWorker, SLOT(deleteLater()));
+    connect(threadSpeechToText, SIGNAL(finished()), threadSpeechToText, SLOT(deleteLater()));
+    connect(speechToTextWorker, SIGNAL(finished()), this, SLOT(finishedSpeechToText()));
+    connect(this, SIGNAL(stopTranscribingAudio()), speechToTextWorker, SLOT(stopSpeechToText()));
+    speechToTextWorker->moveToThread(threadSpeechToText);
+
+    isInRecording = false;
+
 	qApp->installEventFilter(this);
 }
 
@@ -204,7 +237,7 @@ void BubbleWindow::setIcons()
     ui->btnFunction1->setIcon(QIcon(":/Icons/resources/icons/microphone-on.png"));
     ui->btnFunction2->setIcon(QIcon(":/Icons/resources/icons/screenshot.png"));
     ui->btnFunction3->setIcon(QIcon(":/Icons/resources/icons/camera-on.png"));
-    ui->btnFunction4->setIcon(QIcon(":/Icons/resources/icons/search.png"));
+    ui->btnFunction4->setIcon(QIcon(":/Icons/resources/icons/text-to-speech.png"));
     ui->btnFunction5->setIcon(QIcon(":/Icons/resources/icons/volume.png"));
 }
 
@@ -340,7 +373,62 @@ void BubbleWindow::on_btnFunction3_clicked()
 
 void BubbleWindow::on_btnFunction4_clicked()
 {
-    QDesktopServices::openUrl(QUrl("https://www.google.com"));
+    if (audioRecorder->state() == QMediaRecorder::StoppedState) {
+        ui->btnFunction4->setIcon(QIcon(":/Icons/resources/icons/recording-off.png"));
+        isInRecording = true;
+        recordingConnection = connect(qApp, &QGuiApplication::focusWindowChanged, this, &BubbleWindow::startSpeechToText);
+        qDebug() << "---Recording to be started---";
+    }
+    else if (audioRecorder->state() == QMediaRecorder::RecordingState ||
+             audioRecorder->state() == QMediaRecorder::PausedState)
+    {
+        audioRecorder->stop();
+        ui->btnFunction4->setIcon(QIcon(":/Icons/resources/icons/text-to-speech.png"));
+        isInRecording = false;
+        emit stopTranscribingAudio();
+        QObject::disconnect(recordingConnection);
+        qDebug() << "---Recording stopped---";
+    }
+}
+
+
+void BubbleWindow::startSpeechToText()
+{
+    if (!isInRecording)
+        return;
+
+    if (this->isActiveWindow()) {
+        if (audioRecorder->state() == QMediaRecorder::RecordingState) {
+            audioRecorder->pause();
+            qDebug() << "---Recording paused---";
+        }
+//        qDebug() << "Focus changed to my app";
+        return;
+    }
+
+    if (audioRecorder->state() == QMediaRecorder::PausedState) {
+        audioRecorder->record();
+        qDebug() << "---Recording resumed---";
+    }
+    else if (audioRecorder->state() == QMediaRecorder::StoppedState)
+    {
+        audioRecorder->record();
+        ui->btnFunction4->setIcon(QIcon(":/Icons/resources/icons/recording-on.png"));
+
+        // Thread for reading wav data and sending it to openai
+        threadSpeechToText->start();
+        qDebug() << "---Recording started---";
+    }
+}
+
+void BubbleWindow::finishedSpeechToText()
+{
+
+}
+
+void BubbleWindow::stopRecording()
+{
+
 }
 
 

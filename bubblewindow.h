@@ -6,6 +6,9 @@
 #include <QRegularExpressionMatch>
 
 class QPropertyAnimation;
+class QAudioRecorder;
+class SpeechToText;
+class QThread;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class BubbleWindow; }
@@ -37,6 +40,13 @@ private slots:
     void on_btnFunction4_clicked();
     void on_btnFunction5_clicked();
 
+    void startSpeechToText();
+    void finishedSpeechToText();
+    void stopRecording();
+
+signals:
+    void stopTranscribingAudio();
+
 private:
     bool isInAdminMode = false;
 	Ui::BubbleWindow *ui;
@@ -56,6 +66,11 @@ private:
     int curSpeakerValue = 100;
     QRegularExpressionMatch match;
     QTimer *timer;
+    QAudioRecorder *audioRecorder;
+    QMetaObject::Connection recordingConnection;
+    SpeechToText *speechToTextWorker;
+    QThread *threadSpeechToText;
+    bool isInRecording;
 
     bool eventFilter(QObject *watched, QEvent *event);
 #ifdef Q_OS_LINUX

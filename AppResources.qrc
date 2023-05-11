@@ -10,5 +10,12 @@
         <file>resources/icons/volume.png</file>
         <file>resources/icons/volume-mute.png</file>
         <file>resources/icons/search.png</file>
+        <file>resources/icons/text-to-speech.png</file>
+        <file>resources/icons/recording-fade.png</file>
+        <file>resources/icons/recording-off.png</file>
+        <file>resources/icons/recording-on.png</file>
+    </qresource>
+    <qresource prefix="/Cursors">
+        <file>resources/cursors/text-box.png</file>
     </qresource>
 </RCC>

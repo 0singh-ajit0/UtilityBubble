@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,10 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    bubblewindow.cpp
+    bubblewindow.cpp \
+    speechtotext.cpp
 
 HEADERS += \
-    bubblewindow.h
+    bubblewindow.h \
+    nlohmann/json.hpp \
+    openai.hpp \
+    speechtotext.h
 
 FORMS += \
     bubblewindow.ui
@@ -25,3 +29,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
 	AppResources.qrc
+
+unix:!macx: LIBS += -lxdo -lsndfile -lcurl
