@@ -21,7 +21,7 @@ public slots:
     std::string getTranscribedString();
 
 signals:
-    void finished();
+    void transcribingFinished(QString text);
 
 private:
     QString m_audioPath;

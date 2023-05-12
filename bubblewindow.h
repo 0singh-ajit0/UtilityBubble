@@ -21,7 +21,7 @@ class BubbleWindow : public QMainWindow
 
 public:
 	BubbleWindow(QWidget *parent = nullptr);
-	QSize sizeHint() const override;
+    QSize sizeHint() const override;
 	~BubbleWindow();
 
 private slots:
@@ -41,8 +41,7 @@ private slots:
     void on_btnFunction5_clicked();
 
     void startSpeechToText();
-    void finishedSpeechToText();
-    void stopRecording();
+    void finishedSpeechToText(QString text);
 
 signals:
     void stopTranscribingAudio();

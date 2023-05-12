@@ -8,14 +8,8 @@
 #include <QJsonValue>
 #include <QDir>
 
-
-extern "C" {
-#include <xdo.h>
-}
 #include "openai.hpp"
 
-
-xdo_t *x = xdo_new(":0.0");
 
 SpeechToText::SpeechToText(QObject *parent, QString audioPath, QString fileName, int segmentTime)
     : QObject{parent}
@@ -32,7 +26,7 @@ void SpeechToText::startSpeechToText()
 {
     toTranscribe = true;
 
-    timer->start(3000);
+    timer->start(5000);
 }
 
 void SpeechToText::stopSpeechToText()
@@ -86,9 +80,8 @@ void SpeechToText::transcribeAudio()
         sf_close(outfile);
         delete audioIn;
 
-        std::string text = getTranscribedString();
-        xdo_enter_text_window(x, CURRENTWINDOW, text.c_str(), 10000);
-
+        QString text = QString::fromStdString(getTranscribedString());
+        emit transcribingFinished(text);
 
         QFile::remove(QDir::homePath() + "/Music/upload.wav");
         QFile::remove(QDir::homePath() + "/Music/output-" + QString::number(currentOutFileIndex) + ".wav");
@@ -99,7 +92,7 @@ void SpeechToText::transcribeAudio()
 
 std::string SpeechToText::getTranscribedString()
 {
-    openai::start("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");
+    openai::start("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");
 
     auto transcription = openai::audio().transcribe(R"({
         "file": "/home/ajit/Music/upload.wav",

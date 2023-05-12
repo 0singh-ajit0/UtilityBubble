@@ -23,11 +23,12 @@
 #include <QWindow>
 #include <QUrl>
 #include <QDir>
+#include <QtConcurrent/QtConcurrent>
+#include <QProcess>
 
 #ifdef Q_OS_LINUX
 #include <unistd.h>
 #endif
-
 
 #define BUBBLE_WIDTH    64
 #define BUBBLE_HEIGHT   64
@@ -155,14 +156,15 @@ void BubbleWindow::initApp()
     audioSettings.setEncodingMode(QMultimedia::ConstantQualityEncoding);
     audioRecorder->setEncodingSettings(audioSettings, QVideoEncoderSettings(), "audio/x-wav");
 
-    speechToTextWorker = new SpeechToText(nullptr, QDir::homePath() + "/Music/", "output.wav", 3);
+    speechToTextWorker = new SpeechToText(nullptr, QDir::homePath() + "/Music/", "output.wav", 5);
 
     threadSpeechToText = new QThread;
     connect(threadSpeechToText, SIGNAL(started()), speechToTextWorker, SLOT(startSpeechToText()));
-    connect(speechToTextWorker, SIGNAL(finished()), threadSpeechToText, SLOT(quit()));
-    connect(speechToTextWorker, SIGNAL(finished()), speechToTextWorker, SLOT(deleteLater()));
+//    connect(speechToTextWorker, SIGNAL(finished()), threadSpeechToText, SLOT(quit()));
+//    connect(speechToTextWorker, SIGNAL(finished()), speechToTextWorker, SLOT(deleteLater()));
     connect(threadSpeechToText, SIGNAL(finished()), threadSpeechToText, SLOT(deleteLater()));
-    connect(speechToTextWorker, SIGNAL(finished()), this, SLOT(finishedSpeechToText()));
+//    connect(speechToTextWorker, SIGNAL(finished()), this, SLOT(finishedSpeechToText()));
+    connect(speechToTextWorker, SIGNAL(transcribingFinished(QString)), this, SLOT(finishedSpeechToText(QString)));
     connect(this, SIGNAL(stopTranscribingAudio()), speechToTextWorker, SLOT(stopSpeechToText()));
     speechToTextWorker->moveToThread(threadSpeechToText);
 
@@ -385,7 +387,8 @@ void BubbleWindow::on_btnFunction4_clicked()
         audioRecorder->stop();
         ui->btnFunction4->setIcon(QIcon(":/Icons/resources/icons/text-to-speech.png"));
         isInRecording = false;
-        emit stopTranscribingAudio();
+        QFile::remove(QDir::homePath() + "/Music/output.wav");
+        threadSpeechToText->exit();
         QObject::disconnect(recordingConnection);
         qDebug() << "---Recording stopped---";
     }
@@ -421,16 +424,14 @@ void BubbleWindow::startSpeechToText()
     }
 }
 
-void BubbleWindow::finishedSpeechToText()
+void BubbleWindow::finishedSpeechToText(QString text)
 {
+    std::string std_text = text.toStdString();
+    const char *textToWrite = std_text.c_str();
+    qDebug() << QString::fromLocal8Bit(textToWrite);
 
+    QProcess::execute("xdotool", QStringList() << "type" << text);
 }
-
-void BubbleWindow::stopRecording()
-{
-
-}
-
 
 void BubbleWindow::on_btnFunction5_clicked()
 {
