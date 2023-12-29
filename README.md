@@ -1,4 +1,5 @@
 # UtilityBubble
+Utility Bubble is a small window application analogous to “Assistive Ball” in android. It is used for accessing frequently used features of the OS and can be also used for opening recent or most used apps.
 
 ## Installation
 
